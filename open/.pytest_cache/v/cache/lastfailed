@@ -1,0 +1,10 @@
+{
+  "tests/test_edit_line_range.py::test_no_unused_os_tempfile_imports": true,
+  "tests/test_verify_tool.py::test_edit_failure_keeps_list_for_retry": true,
+  "tests/test_write_integrity.py::test_a_read_only_file_still_reports_an_error": true,
+  "tests/test_chat_bubble_split.py::test_spot_check_methods_exist[content]": true,
+  "tests/test_chat_bubble_split.py::test_real_bubble_builds_its_content": true,
+  "tests/test_chat_bubble_split.py::test_chatview_still_resolves_the_shared_helper": true,
+  "tests/test_checkpoint_tool.py::test_path_argument_overrides_the_project": true,
+  "tests/test_loop_fingerprint.py::test_loop_shape_is_unchanged": true
+}
