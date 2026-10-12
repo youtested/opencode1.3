@@ -1,0 +1,4 @@
+[console_scripts]
+opencode-control = opencode_py.control:main
+opencode-py = opencode_py.main:main
+opencode-server = opencode_py.server_control:main
