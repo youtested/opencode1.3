@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OpenCode Server Control</title>
+  <style>
+    /* Design tokens taken from the official OpenCode app (app.opencode.ai, theme oc-2) */
+    :root {
+      color-scheme: dark light;
+      --grey-100:#fafafa; --grey-200:#f2f2f2; --grey-300:#eee; --grey-400:#dbdbdb;
+      --grey-500:#aeaeae; --grey-600:gray; --grey-700:#5c5c5c; --grey-800:#3a3a3a;
+      --grey-900:#2e2e2e; --grey-1000:#242424; --grey-1100:#161616; --grey-1200:#080808;
+      --blue-300:#c3d4fd; --blue-400:#a2bcff; --blue-500:#7698fd; --blue-600:#3b5cf6;
+      --blue-700:#3250df; --blue-900:#263fa9;
+      --green-400:#96e3a6; --red-500:#f17471;
+      --radius-xs:2px; --radius-sm:4px; --radius-md:6px; --radius-lg:8px; --radius-xl:10px;
+      --font-sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      --font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --bg-deep:#080808; --bg-base:#161616;
+      --layer-01:#242424; --layer-02:#2e2e2e; --layer-03:#3a3a3a; --layer-04:#5c5c5c;
+      --text:#fafafa; --text-muted:#aeaeae; --text-faint:var(--grey-600);
+      --icon:#dbdbdb; --icon-muted:var(--grey-600);
+      --border:rgba(255,255,255,.1); --border-strong:rgba(255,255,255,.2); --border-muted:rgba(255,255,255,.05);
+      --accent:#3b5cf6; --accent-text:#a2bcff; --accent-hover:#7698fd; --btn-neutral:rgba(255,255,255,.04);
+      --shadow-md:0 6px 12px -2px rgba(0,0,0,.1),0 4px 8px -2px rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.15);
+      --shadow-lg:0 16px 48px -6px rgba(0,0,0,.15),0 6px 12px -2px rgba(0,0,0,.1),0 1px 2.5px rgba(0,0,0,.1);
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-deep:#fafafa; --bg-base:#fff;
+        --layer-01:#fafafa; --layer-02:#f2f2f2; --layer-03:#eee; --layer-04:#dbdbdb;
+        --text:#161616; --text-muted:#5c5c5c; --text-faint:var(--grey-600);
+        --icon:#3a3a3a; --icon-muted:var(--grey-600);
+        --border:rgba(0,0,0,.1); --border-strong:rgba(0,0,0,.2); --border-muted:rgba(0,0,0,.05);
+        --accent-text:#3b5cf6; --accent-hover:#3250df; --btn-neutral:#fff;
+        --shadow-md:0 6px 12px -2px rgba(0,0,0,.07),0 4px 8px -2px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.1);
+        --shadow-lg:0 16px 48px -6px rgba(0,0,0,.05),0 6px 12px -2px rgba(0,0,0,.04),0 1px 2.5px rgba(0,0,0,.06);
+      }
+    }
+    * { box-sizing:border-box; }
+    html,body { height:100%; }
+    body {
+      margin:0; min-height:100dvh; display:grid; place-items:center; padding:16px;
+      background:var(--bg-deep); color:var(--text);
+      font:400 14px/1.5 var(--font-sans); -webkit-font-smoothing:antialiased;
+    }
+    button,input { font:inherit; color:inherit; }
+    :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+    .card {
+      width:min(420px,100%); padding:22px; border:1px solid var(--border);
+      border-radius:var(--radius-xl); background:var(--bg-base); box-shadow:var(--shadow-lg);
+    }
+    .card h1 { margin:0 0 4px; font-size:16px; font-weight:500; letter-spacing:-.16px; }
+    .muted { color:var(--text-muted); font-size:13px; }
+    .state {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin:20px 0 14px; padding:14px 0; border-top:1px solid var(--border-muted); border-bottom:1px solid var(--border-muted);
+    }
+    .state strong { font-size:20px; font-weight:500; letter-spacing:-.32px; }
+    .switch { display:flex; align-items:center; gap:9px; cursor:pointer; font-size:13px; color:var(--text-muted); }
+    .switch input {
+      appearance:none; -webkit-appearance:none; width:38px; height:22px; margin:0; flex:none;
+      border-radius:9999px; background:var(--layer-03); border:1px solid var(--border);
+      position:relative; cursor:pointer; transition:background .15s,border-color .15s;
+    }
+    .switch input::after {
+      content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:9999px;
+      background:var(--text-muted); transition:transform .15s,background .15s;
+    }
+    .switch input:checked { background:var(--accent); border-color:var(--accent); }
+    .switch input:checked::after { transform:translateX(16px); background:#fff; }
+
+    input[type=password],input[type=text] {
+      width:100%; margin-top:8px; padding:7px 10px; border:1px solid var(--border);
+      border-radius:var(--radius-md); background:var(--bg-deep); color:var(--text); font-size:13px; outline:none;
+    }
+    input:focus { border-color:var(--accent); }
+    input::placeholder { color:var(--text-faint); }
+
+    .btn {
+      width:100%; margin-top:12px; height:32px; border:1px solid var(--accent); border-radius:var(--radius-md);
+      background:var(--accent); color:#fff; font-size:13px; font-weight:500; cursor:pointer;
+      transition:background .12s,border-color .12s;
+    }
+    .btn:hover { background:var(--blue-700); border-color:var(--blue-700); }
+    .btn.neutral { background:var(--btn-neutral); border-color:var(--border); color:var(--text); }
+    .btn.neutral:hover { background:var(--layer-02); border-color:var(--border-strong); }
+    .notice { min-height:20px; margin-top:12px; color:var(--text-muted); font-size:13px; }
+
+    .modal { position:fixed; inset:0; display:none; place-items:center; padding:18px; background:rgba(0,0,0,.6); z-index:2; }
+    .modal.show { display:grid; }
+    .modal-card {
+      width:min(420px,100%); padding:20px; border:1px solid var(--border);
+      border-radius:var(--radius-xl); background:var(--bg-base); box-shadow:var(--shadow-lg);
+    }
+    .modal-card h2 { margin:0 0 6px; font-size:16px; font-weight:500; letter-spacing:-.16px; }
+    .modal-card p { margin:0; color:var(--text-muted); font-size:13px; }
+    .token-row { display:flex; gap:7px; }
+    .token-row input { min-width:0; flex:1; font-family:var(--font-mono); }
+    .token-row button { width:auto; margin:0; white-space:nowrap; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>OpenCode Server</h1>
+    <div class="muted">One global switch for every client.</div>
+    <div class="state"><strong id="state">Checking...</strong><label class="switch"><span>ON/OFF</span><input id="toggle" type="checkbox" aria-label="Server on or off"></label></div>
+    <div id="url" class="muted"></div>
+    <div id="notice" class="notice"></div>
+    <div id="auth"><input id="token" type="password" placeholder="Control token"><button class="btn" id="saveToken">Connect control service</button></div>
+  </main>
+  <div id="modal" class="modal"><div class="modal-card"><h2 id="modalTitle"></h2><p id="modalMessage"></p><div id="tokenRow" class="token-row"><input id="modalToken" readonly><button class="btn neutral" id="copyToken">Copy token</button></div><button class="btn neutral" id="closeModal">Close</button></div></div>
+  <script>
+    const state={token:localStorage.getItem('opencode_control_token')||''};
+    const $=id=>document.getElementById(id);
+    const hash=new URLSearchParams(location.hash.slice(1));if(hash.get('token')){state.token=hash.get('token');localStorage.setItem('opencode_control_token',state.token);history.replaceState(null,'',location.pathname)}$('token').value=state.token;
+    async function api(path,options={}){const headers=Object.assign({'Accept':'application/json','Authorization':'Bearer '+state.token},options.headers||{});if(options.body&&typeof options.body!=='string'){headers['Content-Type']='application/json';options.body=JSON.stringify(options.body)}const response=await fetch('/api/v1/control/'+path,Object.assign({},options,{headers}));const text=await response.text();let data={};try{data=text?JSON.parse(text):{}}catch(_){data={error:text}}if(!response.ok)throw new Error(data.error||response.statusText);return data}
+    function showModal(title,message,token){ $('modalTitle').textContent=title;$('modalMessage').textContent=message;$('modalToken').value=token||'';$('tokenRow').style.display=token?'flex':'none';$('copyToken').textContent='Copy token';$('copyToken').onclick=async()=>{try{if(navigator.clipboard)navigator.clipboard.writeText($('modalToken').value);$('copyToken').textContent='Copied'}catch(_){$('copyToken').textContent='Select and copy'}};$('modal').classList.add('show')}
+    $('closeModal').onclick=()=>$('modal').classList.remove('show');
+    async function refresh(){try{const data=await api('status');$('state').textContent=data.running?'ON':'OFF';$('toggle').checked=Boolean(data.running);$('url').textContent=data.url||data.control_url||'';$('auth').style.display='block';$('notice').textContent=data.coding_directory||''}catch(error){$('state').textContent='OFF';$('toggle').checked=false;$('auth').style.display='block';$('notice').textContent=error.message}}
+    async function toggle(){try{const data=await api('toggle',{method:'POST',body:{}});$('state').textContent=data.running?'ON':'OFF';$('toggle').checked=Boolean(data.running);if(data.running)showModal('Server Started','Copy the coding-server token for other clients.',data.token||'');else showModal('Server Stopped','The OpenCode coding server is stopped.','');await refresh()}catch(error){$('notice').textContent=error.message}}
+    $('toggle').onchange=toggle;$('saveToken').onclick=()=>{state.token=$('token').value.trim();localStorage.setItem('opencode_control_token',state.token);refresh()};if(state.token)refresh();else $('auth').style.display='block';setInterval(refresh,5000);
+  </script>
+</body>
+</html>
