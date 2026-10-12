@@ -1,0 +1,22 @@
+retry: 3000
+
+data: {"kind":"turn_started","text":"read the file","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":1,"time":1790683484.5756752}
+
+data: {"kind":"step","step":1,"session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":2,"time":1790683484.576889}
+
+data: {"kind":"tool_start","tool":"read","phase":"start","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":3,"time":1790683484.5770752}
+
+data: {"kind":"text_delta","text":"Looking ","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":4,"time":1790683484.5771282}
+
+data: {"kind":"reasoning_delta","text":"thinking about it","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":5,"time":1790683484.6274009}
+
+data: {"kind":"text_delta","text":"at the file","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":6,"time":1790683484.627511}
+
+data: {"kind":"tool_end","tool":"read","ok":true,"session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":7,"time":1790683484.6275597}
+
+data: {"kind":"usage","usage":{"input":1200,"output":340},"session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":8,"time":1790683484.6276278}
+
+data: {"kind":"notice","text":"1 file read","session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":9,"time":1790683484.6276665}
+
+data: {"kind":"turn_complete","result":{"text":"","reasoning":"","tool_calls_made":0,"usage":null,"provider_id":"","model_id":"","finish_reason":"","error":"","network_failed":false},"session_id":"a7001c69a7674bbe88d27f9cd1e72fb3","seq":10,"time":1790683484.690951}
+
